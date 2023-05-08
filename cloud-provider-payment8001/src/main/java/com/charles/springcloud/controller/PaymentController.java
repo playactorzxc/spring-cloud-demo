@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
+import sun.nio.ch.ThreadPool;
 
 import java.util.List;
 
@@ -66,6 +67,31 @@ public class PaymentController {
         }
 
         return discoveryClient;
+    }
+
+
+    @GetMapping(value = "/payment/fallback/ok/{id}")
+    public String testFallbackOk(@PathVariable("id") Long id) {
+        String result = paymentService.testFallbackOk(id);
+        log.info("testFallbackOk:" + result);
+        return result;
+    }
+
+
+    @GetMapping(value = "/payment/fallback/timeout/{id}")
+    public String testFallbackTimeout(@PathVariable("id") Long id) {
+        String result = paymentService.testFallbackTimeout(id);
+        log.info("testFallbackTimeout:" + result);
+        return result;
+    }
+
+
+    @GetMapping(value = "/payment/circuit/break/{id}")
+    public String testCircuitBreak(@PathVariable("id") Long id) {
+        if (id > 10) throw new RuntimeException("id cannot over 10");
+        String result = paymentService.testCircuitBreak(id);
+        log.info("testCircuitBreak:" + result);
+        return result;
     }
 
 }
